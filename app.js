@@ -17,7 +17,9 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use('/js', express.static('public/javascripts'))
+app.use('/css', express.static('public/stylesheets'))
+app.use('/css/images', express.static('public/images'))
 
 app.use('/', index);
 
