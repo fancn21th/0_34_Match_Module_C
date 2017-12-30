@@ -4,7 +4,6 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var index = require('./routes/index');
 var app = express();
 
 // view engine setup
@@ -21,7 +20,12 @@ app.use('/js', express.static('public/javascripts'))
 app.use('/css', express.static('public/stylesheets'))
 app.use('/css/images', express.static('public/images'))
 
+
+var index = require('./routes/index');
 app.use('/', index);
+
+var dragAndDrop = require('./routes/dragAndDrop');
+app.use('/drag', dragAndDrop);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
