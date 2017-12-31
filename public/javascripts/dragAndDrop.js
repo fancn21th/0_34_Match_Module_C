@@ -4,23 +4,38 @@ var CLIENT_TEMPLATE =
     '   <span class="preference">Client for {1}</span>' +
     '</div>';
 
-var clientQueue = (function () {
+var carsPlace = (function () {
+    function init() {
+
+    }
+
+    // expose public methods
+    return {
+        init: init,
+    };
+})();
+
+var clientsQueue = (function () {
     // dom fields
-    var $clientQueue = null;
+    var $clientsQueue = null;
     var _client_list = [];
     var _brandlist = ["Porsche","Volkswagen","Audi","BMW"];
 
     // private methods
     function _cacheDOM() {
-        $clientQueue = $('#clients_queue');
+        $clientsQueue = $('#clients_queue');
     }
     function _render() {
         var content = '';
-        $clientQueue.empty();
+        $clientsQueue.empty();
         _client_list.forEach(function (client) {
             content += CLIENT_TEMPLATE.format(client.client, client.brand);
-        })
-        $clientQueue.append(content);
+        });
+        $clientsQueue.append(content);
+        $(".client").draggable({
+            revert: "invalid",
+            cursor: "move"
+        });
     }
     // public methods
     function init() {
@@ -32,28 +47,31 @@ var clientQueue = (function () {
         _client_list.push({
             brand: _brandlist[preference],
             client: client,
-        })
+        });
         _render();
     }
     // expose public methods
     return {
         init: init,
         addClient: addClient,
-    }
+    };
 })();
 
 $(document).ready(function() {
     if (!String.prototype.format) {
         String.prototype.format = function() {
-            var args = arguments
+            var args = arguments;
             return this.replace(/{(\d+)}/g, function(match, number) {
                 return typeof args[number] != 'undefined'
                     ? args[number]
-                    : match
+                    : match;
 
-            })
-        }
+            });
+        };
     }
-    clientQueue.init();
-    clientQueue.addClient();
+    carsPlace.init();
+    clientsQueue.init();
+    clientsQueue.addClient();
+    clientsQueue.addClient();
+    clientsQueue.addClient();
 });
