@@ -5,17 +5,22 @@ var CLIENT_TEMPLATE =
     '</div>';
 
 var carsPlace = (function () {
-    var $receptionDeskList = null;
+    var $porscheReceptionDeskList = null;
+    var $volkswagenReceptionDeskList = null;
 
     // private methods
     function _cacheDOM() {
-        $receptionDeskList = $('.car_reception_desk');
+        $porscheReceptionDeskList = $('.car_reception_desk[data-target-brand=Porsche]');
+        $volkswagenReceptionDeskList = $('.car_reception_desk[data-target-brand=Volkswagen]');
     }
 
     // public methods
     function init() {
         _cacheDOM();
-        $receptionDeskList.droppable({
+        $porscheReceptionDeskList.droppable({
+            accept: ".client[data-target-brand=Porsche]",
+        });
+        $volkswagenReceptionDeskList.droppable({
             accept: ".client[data-target-brand=Volkswagen]",
         });
     }
