@@ -103,6 +103,12 @@ html, body {
 /* /clients_queue */
 
 /* client */
+.client_in_car_booth{
+    width: 100%;
+}
+.client_in_car_booth img{
+    height: 60px;
+}
 .client{
     width:80px;
     height:80px;
