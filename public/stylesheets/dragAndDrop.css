@@ -54,6 +54,7 @@ html, body {
     width: 25%;
     height: 160px;
     border: 1px solid green;
+    float: left;
 }
 .car_status{
     width: 25%;

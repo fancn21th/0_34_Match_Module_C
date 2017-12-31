@@ -1,6 +1,6 @@
 // HTML TEMPLATES
 var CLIENT_TEMPLATE =
-    '<div class="client client_{0}">' +
+    '<div class="client client_{0}" data-target-brand="{1}">' +
     '   <span class="preference">Client for {1}</span>' +
     '</div>';
 
@@ -15,7 +15,9 @@ var carsPlace = (function () {
     // public methods
     function init() {
         _cacheDOM();
-        $receptionDeskList.droppable();
+        $receptionDeskList.droppable({
+            accept: ".client[data-target-brand=Volkswagen]",
+        });
     }
 
     // expose public methods
