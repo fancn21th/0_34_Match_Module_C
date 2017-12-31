@@ -8,45 +8,74 @@ html, body {
     font-family:Arial, Helvetica, sans-serif; font-size:12px; text-align:center;
 }
 #salon{
-    width:800px;
-    height:600px;
+    width:1024px;
+    height:786px;
     border:10px solid;
     border-color:#CCC;
     margin:0 auto;
-    margin-top:50px;
+    margin-top:10px;
 }
-/* clients_queue */
-#clients_queue{
-    width:200px;
-    height: 500px;
-    position: absolute;
-    margin-left:590px;
-    margin-top:90px;
-    text-align:center;
-}
-#clients_queue{
-    border:1px solid;
-    border-color:#666;
-}
-/* /clients_queue */
-
 /* cars_place */
 .place{
     position: absolute;
-    width: 400px;
-    height: 140px;
+    width: 600px;
+    height: 180px;
     border:1px solid;
 }
 #volkswagen{
-    margin-top:150px;
+    margin-top:200px;
 }
 #audi{
-    margin-top:300px;
+    margin-top:400px;
 }
 #bmw{
-    margin-top:460px;
+    margin-top:600px;
 }
 /* /cars_place */
+
+/* cars_brand */
+.car_brand {
+    width: 100%;
+    height: 20px;
+    border: 1px solid blue;
+}
+/* /cars_brand */
+
+/* car_booth_list */
+.car_booth_list {
+    width: 100%;
+    height: 160px;
+    border: 1px solid red;
+}
+/* /car_booth_list */
+
+/* car_booth */
+.car_booth {
+    width: 25%;
+    height: 160px;
+    border: 1px solid green;
+}
+.car_status{
+    width: 25%;
+    height: 20px;
+}
+.car_status img{
+    width: 100%;
+    height: 100%;
+}
+.car_img{
+    width: 100%;
+    height: 70px;
+}
+.car_img img{
+    height: 100%;
+}
+.car_reception_desk{
+    width: 100%;
+    height: 70px;
+    border: 1px solid blue;
+}
+/* /car_booth */
 
 #cashier{
     width:150px;
@@ -55,6 +84,23 @@ html, body {
     margin-top:390px;
     margin-left:420px;
 }
+
+/* clients_queue */
+#clients_queue{
+    width: 150px;
+    height: 500px;
+    position: absolute;
+    margin-left: 866px;
+    margin-top: 260px;
+    text-align: center;
+}
+#clients_queue{
+    border:1px solid;
+    border-color:#666;
+}
+/* /clients_queue */
+
+/* client */
 .client{
     width:80px;
     height:80px;
@@ -82,3 +128,4 @@ html, body {
 .client_8{background-image:url(images/client_8.jpg);}
 .client_9{background-image:url(images/client_9.jpg);}
 .client_10{background-image:url(images/client_10.jpg);}
+/* /client */

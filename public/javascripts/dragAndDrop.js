@@ -5,8 +5,17 @@ var CLIENT_TEMPLATE =
     '</div>';
 
 var carsPlace = (function () {
-    function init() {
+    var $receptionDeskList = null;
 
+    // private methods
+    function _cacheDOM() {
+        $receptionDeskList = $('.car_reception_desk');
+    }
+
+    // public methods
+    function init() {
+        _cacheDOM();
+        $receptionDeskList.droppable();
     }
 
     // expose public methods

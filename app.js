@@ -19,6 +19,7 @@ app.use(cookieParser());
 app.use('/js', express.static('public/javascripts'))
 app.use('/css', express.static('public/stylesheets'))
 app.use('/css/images', express.static('public/images'))
+app.use('/images', express.static('public/images'))
 
 
 var index = require('./routes/index');
