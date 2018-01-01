@@ -95,10 +95,6 @@ html, body {
     margin-top: 260px;
     text-align: center;
 }
-#clients_queue{
-    border:1px solid;
-    border-color:#666;
-}
 /* /clients_queue */
 
 /* client */
@@ -136,3 +132,35 @@ html, body {
 .client_9{background-image:url(images/client_9.jpg);}
 .client_10{background-image:url(images/client_10.jpg);}
 /* /client */
+/* display */
+#display{
+    position:absolute;
+    width:260px;
+    margin-top:10px;
+    margin-left:750px;
+}
+#display ul{padding:0px;}
+#display ul li{
+    border:1px solid;
+    display:inline-block;
+    padding:10px;
+}
+/* /display */
+#exit{
+    width:150px;
+    height:200px;
+    position:absolute;
+    margin-top:180px;
+    margin-left:650px;
+}
+#cashier{
+    width:150px;
+    height:200px;
+    position:absolute;
+    margin-top:390px;
+    margin-left:650px;
+}
+#clients_queue,#cashier,#exit{
+    border:1px solid;
+    border-color:#666;
+}
