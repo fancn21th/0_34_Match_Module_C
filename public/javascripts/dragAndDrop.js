@@ -251,7 +251,7 @@ var carsPlace = (function () {
 
 var clientsQueue = (function () {
     // dom fields
-    var $clientsQueue = null;
+    var $clientsQueue;
     var _client_list = []; // data source
     var _brandlist = ["Porsche", "Volkswagen", "Audi", "BMW"];
 
@@ -311,6 +311,57 @@ var clientsQueue = (function () {
     };
 })();
 
+var exit = (function () {
+    // dom fields
+    var $exit = null;
+
+    // private methods
+    function _cacheDOM() {
+        $exit = $('#exit');
+    }
+
+    // public methods
+    function init() {
+        _cacheDOM();
+        $exit.droppable({
+        });
+    }
+    // expose public methods
+    return {
+        init: init,
+    };
+})();
+
+var cashier = (function () {
+    // dom fields
+    var $cashier = null;
+
+    // private methods
+    function _cacheDOM() {
+        $cashier = $('#cashier');
+    }
+    function _dropClientHandler(event, ui) {
+        // var ret = confirm('Do you want to buy this car?');
+        // if (ret) {
+        // } else {
+        // }
+        ui.draggable.fadeOut('slow');
+    }
+
+    // public methods
+    function init() {
+        _cacheDOM();
+        $cashier.droppable({
+            accept: ".client_in_car_booth",
+            drop: _dropClientHandler,
+        });
+    }
+    // expose public methods
+    return {
+        init: init,
+    };
+})();
+
 $(document).ready(function() {
     if (!String.prototype.format) {
         String.prototype.format = function() {
@@ -325,6 +376,9 @@ $(document).ready(function() {
     }
     carsPlace.init();
     clientsQueue.init();
+    exit.init();
+    cashier.init();
+
     clientsQueue.addClient();
     clientsQueue.addClient();
     clientsQueue.addClient();
