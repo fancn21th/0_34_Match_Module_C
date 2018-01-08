@@ -1,9 +1,9 @@
 // HTML 模板
 // 客户列表客户模板
-// var CLIENT_TEMPLATE =
-//     '<div class="client client_{0}" data-client-id="{1}" data-target-brand="{2}">' +
-//     '   <span class="preference">Client for {2}</span>' +
-//     '</div>';
+var CLIENT_TEMPLATE =
+    '<div class="client client_{0}" data-client-id="{1}" data-target-brand="{2}">' +
+    '   <span class="preference">Client for {2}</span>' +
+    '</div>';
 // // 展位客户模板
 // var CLIENT_IN_CAR_BOOTH_TEMPLATE =
 //     '<div class="client_in_car_booth" data-car-id="{0}">' +
@@ -18,7 +18,7 @@ var CARS_PLACE_TEMPLATE =
     '    <div class="car_booth_list">' +
     '    </div>' +
     '</div>';
-// 展位车位模板
+// 展位车位模板 (插入到展位模板)
 var CAR_BOOTH_TEMPLATE =
     '<div class="car_booth">' +
     '   <div class="car_status">' +
@@ -197,6 +197,7 @@ window.car_dealer = {
 
 var carsPlace = (function () {
     var $cars_place;
+    // 缓存DOM
     function _cacheDOM() {
         $cars_place = $('#cars_place');
     }
@@ -231,6 +232,7 @@ var carsPlace = (function () {
             $car_booth_list.append(content);
         });
     }
+    // 初始化
     function init() {
         _cacheDOM();
         _renderCarsPlace();
@@ -238,6 +240,64 @@ var carsPlace = (function () {
     }
     return {
       init: init,
+    };
+})();
+
+var clientsQueue = (function () {
+    var $clientsQueue;
+    var _client_list = [];
+    // 缓存DOM
+    function _cacheDOM() {
+        $clientsQueue = $('#clients_queue');
+    }
+    function _renderClietList() {
+        var content = '';
+        $clientsQueue.empty();
+        _client_list.forEach(function (client) {
+            content += CLIENT_TEMPLATE.format(
+                client.client,
+                client.id,
+                client.brand
+            );
+        });
+        $clientsQueue.append(content);
+        $(".client").draggable({
+            revert: "invalid",
+            cursor: "move"
+        });
+    }
+    // 初始化
+    function init() {
+        _cacheDOM();
+    }
+    function addClient() {
+        var preference = Math.floor((Math.random()*4));
+        var clientIdx = Math.floor((Math.random()*10)+1);
+        _client_list.push({
+            id: Date.now(),
+            brand: window.cars_brand[Object.keys(window.cars_brand)[preference]],
+            client: clientIdx,
+            img: 'images/client_{0}.jpg'.format(clientIdx)
+        });
+        _renderClietList();
+    }
+    return {
+        init: init,
+        addClient: addClient,
+    };
+})();
+
+var exit = (function () {
+    // 缓存DOM
+    function _cacheDOM() {
+
+    }
+    // 初始化
+    function init() {
+        _cacheDOM();
+    }
+    return {
+        init: init,
     };
 })();
 
@@ -256,4 +316,13 @@ $(document).ready(function() {
     }
 
     carsPlace.init();
+    clientsQueue.init();
+    exit.init();
+
+    clientsQueue.addClient();
+    clientsQueue.addClient();
+    clientsQueue.addClient();
+    clientsQueue.addClient();
+    clientsQueue.addClient();
+    clientsQueue.addClient();
 });
