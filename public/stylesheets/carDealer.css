@@ -1,0 +1,168 @@
+* {
+    margin:0;
+    padding:0;
+}
+html, body {
+    width:100%;
+    height:100%;
+    font-family:Arial, Helvetica, sans-serif; font-size:12px; text-align:center;
+}
+#salon{
+    width:1024px;
+    height:786px;
+    border:10px solid;
+    border-color:#CCC;
+    margin:0 auto;
+    margin-top:10px;
+}
+/* cars_place */
+.place{
+    position: absolute;
+    width: 600px;
+    height: 180px;
+    border:1px solid;
+}
+#volkswagen{
+    margin-top:200px;
+}
+#audi{
+    margin-top:400px;
+}
+#bmw{
+    margin-top:600px;
+}
+/* /cars_place */
+
+/* cars_brand */
+.car_brand {
+    width: 100%;
+    height: 20px;
+}
+/* /cars_brand */
+
+/* car_booth_list */
+.car_booth_list {
+    width: 100%;
+    height: 160px;
+    border: 1px dashed;
+    border-color: red;
+}
+/* /car_booth_list */
+
+/* car_booth */
+.car_booth {
+    width: 20%;
+    height: 160px;
+    border: 1px solid;
+    border-color: green;
+    float: left;
+    margin-left: 5px;
+}
+.car_status{
+    width: 25%;
+    height: 20px;
+}
+.car_status img{
+    height: 20px;
+}
+.car_img{
+    width: 100%;
+    height: 70px;
+}
+.car_img img{
+    height: 100%;
+}
+.car_reception_desk{
+    width: 100%;
+    height: 70px;
+    border: 1px solid;
+    border-color: blue;
+}
+/* /car_booth */
+
+#cashier{
+    width:150px;
+    height:200px;
+    position:absolute;
+    margin-top:390px;
+    margin-left:420px;
+}
+
+/* clients_queue */
+#clients_queue{
+    width: 150px;
+    height: 500px;
+    position: absolute;
+    margin-left: 866px;
+    margin-top: 260px;
+    text-align: center;
+}
+/* /clients_queue */
+
+/* client */
+.client_in_car_booth{
+    width: 100%;
+}
+.client_in_car_booth img{
+    height: 60px;
+}
+.client{
+    width:80px;
+    height:80px;
+    position:absolute;
+    line-height:80px;
+    font-size:10px;
+    border:1px solid
+}
+.client{
+    margin: 0 auto;
+    background-color:#FFF;
+    line-height:10px;
+    background-position:bottom;
+    background-repeat:no-repeat;
+    position:relative;
+    margin-top:10px;
+}
+.client_1{background-image:url(images/client_1.jpg);}
+.client_2{background-image:url(images/client_2.jpg);}
+.client_3{background-image:url(images/client_3.jpg);}
+.client_4{background-image:url(images/client_4.jpg);}
+.client_5{background-image:url(images/client_5.jpg);}
+.client_6{background-image:url(images/client_6.jpg);}
+.client_7{background-image:url(images/client_7.jpg);}
+.client_8{background-image:url(images/client_8.jpg);}
+.client_9{background-image:url(images/client_9.jpg);}
+.client_10{background-image:url(images/client_10.jpg);}
+/* /client */
+/* display */
+#display{
+    position:absolute;
+    width:260px;
+    margin-top:10px;
+    margin-left:750px;
+}
+#display ul{padding:0px;}
+#display ul li{
+    border:1px solid;
+    display:inline-block;
+    padding:10px;
+}
+/* /display */
+#exit{
+    width:150px;
+    height:200px;
+    position:absolute;
+    margin-top:180px;
+    margin-left:650px;
+}
+#cashier{
+    width:150px;
+    height:200px;
+    position:absolute;
+    margin-top:390px;
+    margin-left:650px;
+}
+#clients_queue,#cashier,#exit{
+    border:1px solid;
+    border-color:#666;
+}

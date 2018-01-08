@@ -28,6 +28,9 @@ app.use('/', index);
 var dragAndDrop = require('./routes/dragAndDrop');
 app.use('/drag', dragAndDrop);
 
+var carDealer = require('./routes/carDealer');
+app.use('/dealer', carDealer);
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   var err = new Error('Not Found');
