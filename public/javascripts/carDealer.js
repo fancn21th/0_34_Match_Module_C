@@ -232,11 +232,22 @@ var carsPlace = (function () {
             $car_booth_list.append(content);
         });
     }
+    // 客户拖放到汽车展位的回调处理方法
+    function _dropClientHandler() {
+        // console.log(ui.draggable);
+    }
     // 初始化
     function init() {
         _cacheDOM();
         _renderCarsPlace();
         _renderCarsBooth();
+        Object.keys(window.cars_brand).forEach(function (carKey) {
+            var $carReceptionDeskList = $('.car_reception_desk[data-target-brand={0}]'.format(window.cars_brand[carKey]));
+            $carReceptionDeskList.droppable({
+                accept: ".client[data-target-brand={0}]".format(window.cars_brand[carKey]),
+                drop: _dropClientHandler
+            });
+        });
     }
     return {
       init: init,
