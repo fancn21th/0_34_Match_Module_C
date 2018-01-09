@@ -4,11 +4,11 @@ var CLIENT_TEMPLATE =
     '<div class="client client_{0}" data-client-id="{1}" data-target-brand="{2}">' +
     '   <span class="preference">Client for {2}</span>' +
     '</div>';
-// // 展位客户模板
-// var CLIENT_IN_CAR_BOOTH_TEMPLATE =
-//     '<div class="client_in_car_booth" data-car-id="{0}">' +
-//     '   <img src="{1}" alt=""/>' +
-//     '</div>';
+// 展位客户模板
+var CLIENT_IN_CAR_BOOTH_TEMPLATE =
+    '<div class="client_in_car_booth" data-car-reception-desk-id="{0}">' +
+    '   <img src="{1}" alt=""/>' +
+    '</div>';
 // 展位模板
 var CARS_PLACE_TEMPLATE =
     '<div id="{0}" class="place">' +
@@ -233,14 +233,51 @@ var carsPlace = (function () {
             $car_booth_list.append(content);
         });
     }
+    function _renderClientInReceptionDesk(receptionDeskId) {
+        var $carReceptionDesk = $('.car_reception_desk[data-car-reception-desk-id=' + receptionDeskId + ']');
+        var client = _getCarInPlace(receptionDeskId).client;
+        $carReceptionDesk.empty();
+        $carReceptionDesk.append(CLIENT_IN_CAR_BOOTH_TEMPLATE.format(
+            receptionDeskId,
+            client.img
+        ));
+        var $clientInReceptionDesk = $carReceptionDesk.find('div.client_in_car_booth');
+        $clientInReceptionDesk.draggable({
+            revert: "invalid",
+            cursor: "move"
+        });
+    }
+    function _renderClientAfterDropEvent(clientUI, clientId, receptionDeskId) {
+        clientUI.fadeOut('slow', function () {
+            _renderClientInReceptionDesk(receptionDeskId);
+        });
+    }
+    function _getCarInPlace(receptionDeskId) {
+        var match = window.car_dealer.cars_in_place.filter(function (carInPlace) {
+            return carInPlace.id === receptionDeskId;
+        });
+        return match && match.length > 0 ? match[0] : null;
+    }
+    function _updateCarInPlace(receptionDeskId, client, status) {
+        var carInPlace = _getCarInPlace(receptionDeskId);
+        carInPlace.client = client;
+        carInPlace.status = status;
+    }
     // 客户拖放到汽车展位的回调处理方法
     function _dropClientHandler(event, ui) {
         var clientId = ui.draggable.attr('data-client-id');
-        var carInPlace = window.car_dealer.cars_in_place.filter(function (carInPlace) {
-            return carInPlace.id === $(event.target).attr('data-car-reception-desk-id');
-        })[0];
-        carInPlace.client = clientId;
-        carInPlace.status = window.cars_in_place_status.occupied;
+        _updateCarInPlace(
+            $(event.target).attr('data-car-reception-desk-id'),
+            clientsQueue.getClientById(clientId),
+            window.cars_in_place_status.occupied
+        );
+        _renderClientAfterDropEvent(
+            ui.draggable,
+            clientId,
+            $(event.target).attr('data-car-reception-desk-id')
+        );
+        // 从clientsQueue移除客户数据
+        clientsQueue.removeClient(clientId);
     }
     function _isSpecificBrandCarsPlaceAllOccupied(brand) {
         return window.car_dealer.cars_in_place.filter(function (carInPlace) {
@@ -250,9 +287,7 @@ var carsPlace = (function () {
         }).length === 0;
     }
     function _isClientDroppable(actualBrand, receptionDeskId) {
-        var carInPlace = window.car_dealer.cars_in_place.filter(function (carInPlace) {
-            return carInPlace.id === receptionDeskId;
-        })[0];
+        var carInPlace = _getCarInPlace(receptionDeskId);
         if(carInPlace.brand !== actualBrand &&
             _isSpecificBrandCarsPlaceAllOccupied(actualBrand))
             return true;
@@ -323,9 +358,26 @@ var clientsQueue = (function () {
         });
         _renderClietList();
     }
+    function removeClient(clientId) {
+        _client_list = _client_list.filter(function (client) {
+            return client.id.toString().toLowerCase() !== clientId;
+        });
+    }
+    function getClientById(clientId) {
+        var match = _client_list.filter(function (client) {
+            return client.id.toString() === clientId;
+        });
+        return match && match.length > 0 ? match[0] : null;
+    }
+    function getAllClient() {
+        return _client_list;
+    }
     return {
         init: init,
         addClient: addClient,
+        removeClient: removeClient,
+        getClientById: getClientById,
+        getAllClient: getAllClient,
     };
 })();
 
