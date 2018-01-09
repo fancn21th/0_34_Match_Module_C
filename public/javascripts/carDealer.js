@@ -6,8 +6,8 @@ var CLIENT_TEMPLATE =
     '</div>';
 // 展位客户模板
 var CLIENT_IN_CAR_BOOTH_TEMPLATE =
-    '<div class="client_in_car_booth" data-car-reception-desk-id="{0}">' +
-    '   <img src="{1}" alt=""/>' +
+    '<div class="client_in_car_booth" data-car-reception-desk-id="{0}" data-target-brand="{1}">' +
+    '   <img src="{2}" alt=""/>' +
     '</div>';
 // 展位模板
 var CARS_PLACE_TEMPLATE =
@@ -239,6 +239,7 @@ var carsPlace = (function () {
         $carReceptionDesk.empty();
         $carReceptionDesk.append(CLIENT_IN_CAR_BOOTH_TEMPLATE.format(
             receptionDeskId,
+            client.brand,
             client.img
         ));
         var $clientInReceptionDesk = $carReceptionDesk.find('div.client_in_car_booth');
@@ -247,7 +248,7 @@ var carsPlace = (function () {
             cursor: "move"
         });
     }
-    function _renderClientAfterDropEvent(clientUI, clientId, receptionDeskId) {
+    function _renderClientAfterDropEvent(clientUI, receptionDeskId) {
         clientUI.fadeOut('slow', function () {
             _renderClientInReceptionDesk(receptionDeskId);
         });
@@ -266,18 +267,39 @@ var carsPlace = (function () {
     // 客户拖放到汽车展位的回调处理方法
     function _dropClientHandler(event, ui) {
         var clientId = ui.draggable.attr('data-client-id');
-        _updateCarInPlace(
-            $(event.target).attr('data-car-reception-desk-id'),
-            clientsQueue.getClientById(clientId),
-            window.cars_in_place_status.occupied
-        );
-        _renderClientAfterDropEvent(
-            ui.draggable,
-            clientId,
-            $(event.target).attr('data-car-reception-desk-id')
-        );
-        // 从clientsQueue移除客户数据
-        clientsQueue.removeClient(clientId);
+        if (clientId) {
+            // 用户来自clients queue
+            _updateCarInPlace(
+                $(event.target).attr('data-car-reception-desk-id'),
+                clientsQueue.getClientById(clientId),
+                window.cars_in_place_status.occupied
+            );
+            _renderClientAfterDropEvent(
+                ui.draggable,
+                $(event.target).attr('data-car-reception-desk-id')
+            );
+            // 从clientsQueue移除客户数据
+            clientsQueue.removeClient(clientId);
+        } else {
+            // 用户来自同品牌其他展位
+            var originalReceptionDeskId = ui.draggable.attr('data-car-reception-desk-id');
+            var originalCarInPlace = _getCarInPlace(originalReceptionDeskId);
+            var newReceptionDeskId = $(event.target).attr('data-car-reception-desk-id');
+            _updateCarInPlace(
+                newReceptionDeskId,
+                originalCarInPlace.client,
+                window.cars_in_place_status.occupied
+            );
+            _updateCarInPlace(
+                originalReceptionDeskId,
+                null,
+                window.cars_in_place_status.empty
+            );
+            _renderClientAfterDropEvent(
+                ui.draggable,
+                newReceptionDeskId
+            );
+        }
     }
     function _isSpecificBrandCarsPlaceAllOccupied(brand) {
         return window.car_dealer.cars_in_place.filter(function (carInPlace) {
