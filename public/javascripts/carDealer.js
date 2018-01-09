@@ -27,7 +27,7 @@ var CAR_BOOTH_TEMPLATE =
     '   <div class="car_img">' +
     '       <img src="images/{1}" alt=""/>' +
     '   </div>' +
-    '   <div class="car_reception_desk" data-target-brand="{2}" data-car-reception-desk-id="{3}">' +
+    '   <div class="car_reception_desk" data-car-reception-desk-id="{3}">' +
     '       drag and drop client to here' +
     '   </div>' +
     '</div>';
@@ -208,6 +208,7 @@ var carsPlace = (function () {
             $cars_place.append(content);
         });
     }
+    // 生成汽车展位区域内每个汽车展位的DOM
     function _getCarBoothListContent(carKey){
         var content = '';
         window.car_dealer.cars_in_place
@@ -233,8 +234,32 @@ var carsPlace = (function () {
         });
     }
     // 客户拖放到汽车展位的回调处理方法
-    function _dropClientHandler() {
-        // console.log(ui.draggable);
+    function _dropClientHandler(event, ui) {
+        var clientId = ui.draggable.attr('data-client-id');
+        var carInPlace = window.car_dealer.cars_in_place.filter(function (carInPlace) {
+            return carInPlace.id === $(event.target).attr('data-car-reception-desk-id');
+        })[0];
+        carInPlace.client = clientId;
+        carInPlace.status = window.cars_in_place_status.occupied;
+    }
+    function _isSpecificBrandCarsPlaceAllOccupied(brand) {
+        return window.car_dealer.cars_in_place.filter(function (carInPlace) {
+            return carInPlace.brand === brand;
+        }).filter(function (carInPlace) {
+            return carInPlace.status === window.cars_in_place_status.empty;
+        }).length === 0;
+    }
+    function _isClientDroppable(actualBrand, receptionDeskId) {
+        var carInPlace = window.car_dealer.cars_in_place.filter(function (carInPlace) {
+            return carInPlace.id === receptionDeskId;
+        })[0];
+        if(carInPlace.brand !== actualBrand &&
+            _isSpecificBrandCarsPlaceAllOccupied(actualBrand))
+            return true;
+        if(carInPlace.status === window.cars_in_place_status.empty &&
+            carInPlace.brand === actualBrand)
+            return true;
+        return false;
     }
     // 初始化
     function init() {
@@ -242,9 +267,15 @@ var carsPlace = (function () {
         _renderCarsPlace();
         _renderCarsBooth();
         Object.keys(window.cars_brand).forEach(function (carKey) {
-            var $carReceptionDeskList = $('.car_reception_desk[data-target-brand={0}]'.format(window.cars_brand[carKey]));
+            var $carReceptionDeskList = $('.car_reception_desk'.format(window.cars_brand[carKey]));
             $carReceptionDeskList.droppable({
-                accept: ".client[data-target-brand={0}]".format(window.cars_brand[carKey]),
+                accept: function(ui) {
+                    var droppedEle = $(this);
+                    return _isClientDroppable(
+                        ui.attr('data-target-brand'),
+                        droppedEle.attr('data-car-reception-desk-id')
+                    );
+                },
                 drop: _dropClientHandler
             });
         });
@@ -336,4 +367,11 @@ $(document).ready(function() {
     clientsQueue.addClient();
     clientsQueue.addClient();
     clientsQueue.addClient();
+    clientsQueue.addClient();
+    clientsQueue.addClient();
+    clientsQueue.addClient();
+    clientsQueue.addClient();
+    clientsQueue.addClient();
+    clientsQueue.addClient();
+
 });
