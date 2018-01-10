@@ -60,7 +60,7 @@ window.cars_brand_imgs = {
     audi: "audi-logo.jpg",
     bmw: "bmw-logo.jpg",
 };
-// 汽车销售程序数据库
+// 汽车销售程序 内存数据库
 window.car_dealer = {
     // 展位汽车信息列表
     cars_in_place: [
@@ -201,13 +201,6 @@ var carsPlace = (function () {
     function _cacheDOM() {
         $cars_place = $('#cars_place');
     }
-    // 显示不同品牌汽车的展位区域
-    function _renderCarsPlace() {
-        Object.keys(window.cars_brand).forEach(function (carKey) {
-            var content = CARS_PLACE_TEMPLATE.format(carKey, window.cars_brand[carKey]);
-            $cars_place.append(content);
-        });
-    }
     // 生成汽车展位区域内每个汽车展位的DOM
     function _getCarBoothListContent(carKey){
         var content = '';
@@ -224,6 +217,14 @@ var carsPlace = (function () {
                 );
             });
         return content;
+    }
+    // render* DOM 处理方法
+    // 显示不同品牌汽车的展位区域
+    function _renderCarsPlace() {
+        Object.keys(window.cars_brand).forEach(function (carKey) {
+            var content = CARS_PLACE_TEMPLATE.format(carKey, window.cars_brand[carKey]);
+            $cars_place.append(content);
+        });
     }
     // 显示每一辆汽车的展位区域
     function _renderCarsBooth(){
@@ -248,9 +249,20 @@ var carsPlace = (function () {
             cursor: "move"
         });
     }
-    function _renderClientAfterDropEvent(clientUI, receptionDeskId) {
+    function _renderClientInReceptionDeskAfterRemoved(receptionDeskId) {
+        var $carReceptionDesk = $('.car_reception_desk[data-car-reception-desk-id=' + receptionDeskId + ']');
+        $carReceptionDesk.empty();
+        $carReceptionDesk.append('drag and drop client to here');
+    }
+    function _renderClientInReceptionDeskOnAdded(clientUI, receptionDeskId) {
         clientUI.fadeOut('slow', function () {
             _renderClientInReceptionDesk(receptionDeskId);
+        });
+    }
+    function _renderClientInReceptionDeskOnAddedAndRemoved(clientUI, originalReceptionDeskId, newReceptionDeskId) {
+        clientUI.fadeOut('slow', function () {
+            _renderClientInReceptionDesk(newReceptionDeskId);
+            _renderClientInReceptionDeskAfterRemoved(originalReceptionDeskId);
         });
     }
     function _getCarInPlace(receptionDeskId) {
@@ -274,7 +286,7 @@ var carsPlace = (function () {
                 clientsQueue.getClientById(clientId),
                 window.cars_in_place_status.occupied
             );
-            _renderClientAfterDropEvent(
+            _renderClientInReceptionDeskOnAdded(
                 ui.draggable,
                 $(event.target).attr('data-car-reception-desk-id')
             );
@@ -295,8 +307,9 @@ var carsPlace = (function () {
                 null,
                 window.cars_in_place_status.empty
             );
-            _renderClientAfterDropEvent(
+            _renderClientInReceptionDeskOnAddedAndRemoved(
                 ui.draggable,
+                originalReceptionDeskId,
                 newReceptionDeskId
             );
         }
