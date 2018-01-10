@@ -10,7 +10,7 @@ var CLIENT_IN_CAR_BOOTH_TEMPLATE =
     '<div class="client_in_car_booth" data-car-reception-desk-id="{0}" data-target-brand="{1}">' +
     '   <img src="{2}" alt=""/>' +
     '</div>';
-// 展位模板
+// 展位区域模板
 var CARS_PLACE_TEMPLATE =
     '<div id="{0}" class="place">' +
     '    <div class="car_brand">' +
