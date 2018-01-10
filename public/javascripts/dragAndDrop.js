@@ -5,7 +5,7 @@ var CLIENT_TEMPLATE =
     '</div>';
 
 var CLIENT_IN_CAR_BOOTH_TEMPLATE =
-    '<div class="client_in_car_booth" data-client-id="{0}" data-car-id="{1}">' +
+    '<div class="client_in_car_booth" data-client-id="{0}" data-car-id="{1}" data-car-brand="{3}">' +
     '   <img src="{2}" alt=""/>' +
     '</div>';
 
@@ -50,24 +50,28 @@ var carsPlace = (function () {
                 status: _car_in_store_status.empty,
                 img: 'Porsche_1.jpg',
                 brand: 'Porsche',
+                price: 1
             },
             {
                 id: 'p02',
                 status: _car_in_store_status.empty,
                 img: 'Porsche_1.jpg',
                 brand: 'Porsche',
+                price: 1
             },
             {
                 id: 'p03',
                 status: _car_in_store_status.empty,
                 img: 'Porsche_1.jpg',
                 brand: 'Porsche',
+                price: 1
             },
             {
                 id: 'p04',
                 status: _car_in_store_status.empty,
                 img: 'Porsche_1.jpg',
                 brand: 'Porsche',
+                price: 1
             }
         ],
         volkswagen: [
@@ -76,24 +80,28 @@ var carsPlace = (function () {
                 status: _car_in_store_status.empty,
                 img: 'volkswagen_2.png',
                 brand: 'Volkswagen',
+                price: 1
             },
             {
                 id: 'v02',
                 status: _car_in_store_status.empty,
                 img: 'volkswagen_2.png',
                 brand: 'Volkswagen',
+                price: 1
             },
             {
                 id: 'v03',
                 status: _car_in_store_status.empty,
                 img: 'volkswagen_2.png',
                 brand: 'Volkswagen',
+                price: 1
             },
             {
                 id: 'v04',
                 status: _car_in_store_status.empty,
                 img: 'volkswagen_2.png',
                 brand: 'Volkswagen',
+                price: 1
             }
         ],
         audi: [
@@ -102,24 +110,28 @@ var carsPlace = (function () {
                 status: _car_in_store_status.empty,
                 img: 'Audi_1.jpg',
                 brand: 'Audi',
+                price: 1
             },
             {
                 id: 'a02',
                 status: _car_in_store_status.empty,
                 img: 'Audi_1.jpg',
                 brand: 'Audi',
+                price: 1
             },
             {
                 id: 'a03',
                 status: _car_in_store_status.empty,
                 img: 'Audi_1.jpg',
                 brand: 'Audi',
+                price: 1
             },
             {
                 id: 'a04',
                 status: _car_in_store_status.empty,
                 img: 'Audi_1.jpg',
                 brand: 'Audi',
+                price: 1
             }
         ],
         bmw: [
@@ -128,24 +140,28 @@ var carsPlace = (function () {
                 status: _car_in_store_status.empty,
                 img: 'BMW_1.jpg',
                 brand: 'BMW',
+                price: 1
             },
             {
                 id: 'b02',
                 status: _car_in_store_status.empty,
                 img: 'BMW_1.jpg',
                 brand: 'BMW',
+                price: 1
             },
             {
                 id: 'b03',
                 status: _car_in_store_status.empty,
                 img: 'BMW_1.jpg',
                 brand: 'BMW',
+                price: 1
             },
             {
                 id: 'b04',
                 status: _car_in_store_status.empty,
                 img: 'BMW_1.jpg',
                 brand: 'BMW',
+                price: 1
             }
         ]
     }; // data source
@@ -161,11 +177,12 @@ var carsPlace = (function () {
         _car_reception_desk_list.audi = $audiBoothList;
         _car_reception_desk_list.bmw = $bmwBoothList;
     }
-    function _cacheCarReceptionDesk() {
+    function _cacheCarReceptionDesk(callback) {
         $porscheReceptionDeskList = $('.car_reception_desk[data-target-brand=Porsche]');
         $volkswagenReceptionDeskList = $('.car_reception_desk[data-target-brand=Volkswagen]');
         $audiReceptionDeskList = $('.car_reception_desk[data-target-brand=Audi]');
         $bmwReceptionDeskList = $('.car_reception_desk[data-target-brand=BMW]');
+        if(callback) callback();
     }
     function _render() {
         Object.keys(_car_in_store).forEach(function (carKey) {
@@ -188,8 +205,14 @@ var carsPlace = (function () {
         $carReceptionDesk.append(CLIENT_IN_CAR_BOOTH_TEMPLATE.format(
             clientId,
             carReceptionDeskId,
-            client.img
+            client.img,
+            client.brand
         ));
+        var $clientInReceptionDesk = $carReceptionDesk.find('div.client_in_car_booth');
+        $clientInReceptionDesk.draggable({
+            revert: "invalid",
+            cursor: "move"
+        });
     }
     function _dropClientHandler(event, ui){
         clientsQueue.removeClient(
@@ -210,41 +233,50 @@ var carsPlace = (function () {
     function init() {
         _cacheDOM();
         _render();
-        _cacheCarReceptionDesk();
-        $porscheReceptionDeskList.droppable({
-            accept: ".client[data-target-brand=Porsche]",
-            drop: _dropClientHandler
-        });
-        $volkswagenReceptionDeskList.droppable({
-            accept: ".client[data-target-brand=Volkswagen]",
-            drop: _dropClientHandler
-        });
-        $audiReceptionDeskList.droppable({
-            accept: ".client[data-target-brand=Audi]",
-            drop: _dropClientHandler
-        });
-        $bmwReceptionDeskList.droppable({
-            accept: ".client[data-target-brand=BMW]",
-            drop: _dropClientHandler
+        _cacheCarReceptionDesk(function () {
+            $porscheReceptionDeskList.droppable({
+                accept: ".client[data-target-brand=Porsche]",
+                drop: _dropClientHandler
+            });
+            $volkswagenReceptionDeskList.droppable({
+                accept: ".client[data-target-brand=Volkswagen]",
+                drop: _dropClientHandler
+            });
+            $audiReceptionDeskList.droppable({
+                accept: ".client[data-target-brand=Audi]",
+                drop: _dropClientHandler
+            });
+            $bmwReceptionDeskList.droppable({
+                accept: ".client[data-target-brand=BMW]",
+                drop: _dropClientHandler
+            });
         });
     }
 
-    function serveUser(clientId, carReceptionDeskId) {
+    function updateCarInStore(clientId, carReceptionDeskId) {
         // update data source
         _updateCarInStoreStatus(clientId, carReceptionDeskId, _car_in_store_status.occupied);
         _renderClientInReceptionDesk(clientId, carReceptionDeskId);
     }
 
+    function getCarById(brand, id) {
+        var match = _car_in_store[brand.toLowerCase()].filter(function (car) {
+            return car.id === id;
+        });
+        return match && match.length > 0 ? match[0] : null;
+    }
+
     // expose public methods
     return {
         init: init,
-        serveUser: serveUser,
+        updateCarInStore: updateCarInStore,
+        getCarById: getCarById,
     };
 })();
 
 var clientsQueue = (function () {
     // dom fields
-    var $clientsQueue = null;
+    var $clientsQueue;
     var _client_list = []; // data source
     var _brandlist = ["Porsche", "Volkswagen", "Audi", "BMW"];
 
@@ -286,7 +318,7 @@ var clientsQueue = (function () {
     function removeClient(client, carReceptionDeskId) {
         // remove client from clients queue
         client.fadeOut('slow', function () {
-            carsPlace.serveUser(client.attr('data-client-id'), carReceptionDeskId);
+            carsPlace.updateCarInStore(client.attr('data-client-id'), carReceptionDeskId);
         });
     }
     function getClientById(id) {
@@ -304,6 +336,80 @@ var clientsQueue = (function () {
     };
 })();
 
+var exit = (function () {
+    // dom fields
+    var $exit = null;
+
+    // private methods
+    function _cacheDOM() {
+        $exit = $('#exit');
+    }
+
+    // public methods
+    function init() {
+        _cacheDOM();
+        $exit.droppable({
+        });
+    }
+    // expose public methods
+    return {
+        init: init,
+    };
+})();
+
+var display = (function () {
+    var $amount;
+    var _amount = null;
+    function _cacheDOM() {
+        $amount = $('#amount');
+    }
+    function _renderAmount() {
+        $amount.text(_amount);
+    }
+    function init() {
+        _cacheDOM();
+    }
+    function updateAmount(price) {
+        _amount += price;
+        _renderAmount();
+    }
+    return {
+        init: init,
+        updateAmount: updateAmount,
+    };
+})();
+
+var cashier = (function () {
+    // dom fields
+    var $cashier = null;
+
+    // private methods
+    function _cacheDOM() {
+        $cashier = $('#cashier');
+    }
+    function _dropClientHandler(event, ui) {
+        var ret = confirm('Do you want to buy this car?');
+        if (ret) {
+            var car = carsPlace.getCarById(ui.draggable.attr('data-car-brand'), ui.draggable.attr('data-car-id'));
+            display.updateAmount(car.price);
+        }
+        ui.draggable.fadeOut('slow');
+    }
+
+    // public methods
+    function init() {
+        _cacheDOM();
+        $cashier.droppable({
+            accept: ".client_in_car_booth",
+            drop: _dropClientHandler,
+        });
+    }
+    // expose public methods
+    return {
+        init: init,
+    };
+})();
+
 $(document).ready(function() {
     if (!String.prototype.format) {
         String.prototype.format = function() {
@@ -318,6 +424,10 @@ $(document).ready(function() {
     }
     carsPlace.init();
     clientsQueue.init();
+    exit.init();
+    cashier.init();
+    display.init();
+
     clientsQueue.addClient();
     clientsQueue.addClient();
     clientsQueue.addClient();

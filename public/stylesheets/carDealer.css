@@ -37,7 +37,6 @@ html, body {
 .car_brand {
     width: 100%;
     height: 20px;
-    border: 1px solid grey;
 }
 /* /cars_brand */
 
@@ -45,7 +44,8 @@ html, body {
 .car_booth_list {
     width: 100%;
     height: 160px;
-    border: 1px solid red;
+    border: 1px dashed;
+    border-color: red;
 }
 /* /car_booth_list */
 
@@ -53,7 +53,8 @@ html, body {
 .car_booth {
     width: 20%;
     height: 160px;
-    border: 1px solid green;
+    border: 1px solid;
+    border-color: green;
     float: left;
     margin-left: 5px;
 }
@@ -74,7 +75,8 @@ html, body {
 .car_reception_desk{
     width: 100%;
     height: 70px;
-    border: 1px solid blue;
+    border: 1px solid;
+    border-color: blue;
 }
 /* /car_booth */
 
