@@ -1,4 +1,5 @@
 // HTML 模板
+
 // 客户列表客户模板
 var CLIENT_TEMPLATE =
     '<div class="client client_{0}" data-client-id="{1}" data-target-brand="{2}">' +
@@ -33,6 +34,7 @@ var CAR_BOOTH_TEMPLATE =
     '</div>';
 
 // 全局常量
+
 // 汽车在展位上的状态
 window.cars_in_place_status = {
     empty: 'EMPTY',
@@ -48,10 +50,10 @@ window.cars_brand = {
 };
 // 汽车品牌价格枚举
 window.cars_price = {
-    porsche: 1,
-    volkswagen: 2,
-    audi: 3,
-    bmw: 4,
+    porsche: 72500,
+    volkswagen: 23930,
+    audi: 31260,
+    bmw: 43990,
 };
 // 汽车品牌图片
 window.cars_brand_imgs = {
@@ -234,6 +236,7 @@ var carsPlace = (function () {
             $car_booth_list.append(content);
         });
     }
+    // 在一个展位上显示客户信息
     function _renderClientInReceptionDesk(receptionDeskId) {
         var $carReceptionDesk = $('.car_reception_desk[data-car-reception-desk-id=' + receptionDeskId + ']');
         var client = _getCarInPlace(receptionDeskId).client;
@@ -249,10 +252,15 @@ var carsPlace = (function () {
             cursor: "move"
         });
     }
-    function _renderClientInReceptionDeskAfterRemoved(receptionDeskId) {
+    function _renderReceptionDeskAfterRemoved(receptionDeskId) {
         var $carReceptionDesk = $('.car_reception_desk[data-car-reception-desk-id=' + receptionDeskId + ']');
         $carReceptionDesk.empty();
         $carReceptionDesk.append('drag and drop client to here');
+    }
+    function _renderReceptionDeskAfterMakeADeal(receptionDeskId) {
+        var $carReceptionDesk = $('.car_reception_desk[data-car-reception-desk-id=' + receptionDeskId + ']');
+        $carReceptionDesk.empty();
+        $carReceptionDesk.append('Sold Out!');
     }
     function _renderClientInReceptionDeskOnAdded(clientUI, receptionDeskId) {
         clientUI.fadeOut('slow', function () {
@@ -262,7 +270,7 @@ var carsPlace = (function () {
     function _renderClientInReceptionDeskOnAddedAndRemoved(clientUI, originalReceptionDeskId, newReceptionDeskId) {
         clientUI.fadeOut('slow', function () {
             _renderClientInReceptionDesk(newReceptionDeskId);
-            _renderClientInReceptionDeskAfterRemoved(originalReceptionDeskId);
+            _renderReceptionDeskAfterRemoved(originalReceptionDeskId);
         });
     }
     function _getCarInPlace(receptionDeskId) {
@@ -280,7 +288,7 @@ var carsPlace = (function () {
     function _dropClientHandler(event, ui) {
         var clientId = ui.draggable.attr('data-client-id');
         if (clientId) {
-            // 用户来自clients queue
+            // 客户来自Clients Queue
             _updateCarInPlace(
                 $(event.target).attr('data-car-reception-desk-id'),
                 clientsQueue.getClientById(clientId),
@@ -293,7 +301,7 @@ var carsPlace = (function () {
             // 从clientsQueue移除客户数据
             clientsQueue.removeClient(clientId);
         } else {
-            // 用户来自同品牌其他展位
+            // 客户来自同品牌其他展位
             var originalReceptionDeskId = ui.draggable.attr('data-car-reception-desk-id');
             var originalCarInPlace = _getCarInPlace(originalReceptionDeskId);
             var newReceptionDeskId = $(event.target).attr('data-car-reception-desk-id');
@@ -331,6 +339,7 @@ var carsPlace = (function () {
             return true;
         return false;
     }
+
     // 初始化
     function init() {
         _cacheDOM();
@@ -350,8 +359,27 @@ var carsPlace = (function () {
             });
         });
     }
+    function makeClientLeft(receptionDeskId) {
+        _updateCarInPlace(
+            receptionDeskId,
+            '',
+            window.cars_in_place_status.empty
+        );
+        _renderReceptionDeskAfterRemoved(receptionDeskId);
+    }
+    function makeClientMakeADeal(receptionDeskId) {
+        _updateCarInPlace(
+            receptionDeskId,
+            '',
+            window.cars_in_place_status.sold
+        );
+        _renderReceptionDeskAfterMakeADeal(receptionDeskId);
+    }
     return {
-      init: init,
+        init: init,
+        makeClientLeft: makeClientLeft,
+        makeClientMakeADeal: makeClientMakeADeal,
+        getCarInPlace: _getCarInPlace,
     };
 })();
 
@@ -417,16 +445,124 @@ var clientsQueue = (function () {
 })();
 
 var exit = (function () {
+    var $exit;
     // 缓存DOM
     function _cacheDOM() {
+        $exit = $('#exit');
+    }
 
+    function _renderClientOnLeft(clientUI) {
+        clientUI.fadeOut('slow');
+    }
+
+    function _dropClientHandler(event, ui) {
+        var clientId = ui.draggable.attr('data-client-id');
+        if (clientId) {
+            // 客户来自Clients Queue
+            _renderClientOnLeft(ui.draggable);
+            // 从clientsQueue移除客户数据
+            clientsQueue.removeClient(clientId);
+        } else {
+            // 客户来自展位
+            _renderClientOnLeft(ui.draggable);
+            var receptionDeskId = ui.draggable.attr('data-car-reception-desk-id');
+            // 从carsPlace移除客户数据
+            carsPlace.makeClientLeft(receptionDeskId);
+        }
+    }
+    // 初始化
+    function init() {
+        _cacheDOM();
+        $exit.droppable({
+            drop: _dropClientHandler
+        });
+    }
+    return {
+        init: init,
+    };
+})();
+
+var cashier = (function () {
+    var $cashier;
+    // 缓存DOM
+    function _cacheDOM() {
+        $cashier = $('#cashier');
+    }
+    function _renderClientOnLeft(clientUI) {
+        clientUI.fadeOut('slow');
+    }
+    function _dropClientHandler(event, ui) {
+        var receptionDeskId = ui.draggable.attr('data-car-reception-desk-id');
+        var ret = confirm('Do you want to buy this car?');
+        if (ret) {
+            var carInPlace = carsPlace.getCarInPlace(receptionDeskId);
+            carsPlace.makeClientMakeADeal(receptionDeskId);
+            display.soldOneMoreCar(carInPlace.price);
+        } else {
+            carsPlace.makeClientLeft(receptionDeskId);
+            display.oneMoreClientLeftWithNoDeal();
+        }
+        _renderClientOnLeft(ui.draggable);
+    }
+    // 初始化
+    function init() {
+        _cacheDOM();
+        $cashier.droppable({
+            accept: ".client_in_car_booth", // 只接收来自展位的客户
+            drop: _dropClientHandler,
+        });
+    }
+    return {
+        init: init,
+    };
+})();
+
+var display = (function () {
+    var _sales_amount = 0;
+    var _clients_served_count = 0;
+    var _cars_sold_count = 0;
+    var $clientsServed;
+    var $carsSold;
+    var $amount;
+    // 缓存DOM
+    function _cacheDOM() {
+        $clientsServed = $('#clients_served');
+        $carsSold = $('#cars_sold');
+        $amount = $('#amount');
     }
     // 初始化
     function init() {
         _cacheDOM();
     }
+    // function numberWithCommas(x) {
+    //     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    // }
+    function _formatPrice(price) {
+        return parseInt(price).toLocaleString() + '.00';
+    }
+    function _render() {
+        $clientsServed.empty();
+        $carsSold.empty();
+        $amount.empty();
+
+        $clientsServed.append('{0} clients'.format(_clients_served_count));
+        $carsSold.append('{0} cars'.format(_cars_sold_count));
+        $amount.append('€ {0}'.format(_formatPrice(_sales_amount)));
+    }
+    function soldOneMoreCar(price) {
+        _sales_amount += parseInt(price);
+        _clients_served_count ++;
+        _cars_sold_count ++;
+        _render();
+    }
+    function oneMoreClientLeftWithNoDeal() {
+        _clients_served_count ++;
+        _render();
+    }
     return {
         init: init,
+        soldOneMoreCar: soldOneMoreCar,
+        oneMoreClientLeftWithNoDeal: oneMoreClientLeftWithNoDeal,
     };
 })();
 
@@ -447,6 +583,8 @@ $(document).ready(function() {
     carsPlace.init();
     clientsQueue.init();
     exit.init();
+    cashier.init();
+    display.init();
 
     clientsQueue.addClient();
     clientsQueue.addClient();
@@ -460,5 +598,4 @@ $(document).ready(function() {
     clientsQueue.addClient();
     clientsQueue.addClient();
     clientsQueue.addClient();
-
 });
